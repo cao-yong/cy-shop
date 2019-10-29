@@ -1,0 +1,23 @@
+version '1'
+services:
+  product-service:
+    container_name: "cy-product-service"
+    image: cy-product-service
+    ports:
+      - 20000: 20000
+  programs-service:
+        container_name: "cy-programs-service"
+        image: cy-programs-service
+        ports:
+          - 20001: 20001
+  search-service:
+      container_name: "cy-search-service"
+      image: cy-search-service
+      ports:
+        - 20002: 20002
+  cms-service:
+    container_name: "cy-cms-service"
+    image: cy-cms-service
+    ports:
+      - 20003: 20003
+

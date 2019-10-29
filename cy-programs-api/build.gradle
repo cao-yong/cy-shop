@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'com.caoyong'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':cy-share')
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    compile "io.springfox:springfox-swagger2:$springSwaggerVersion"
+    compile "io.springfox:springfox-swagger-ui:$springSwaggerVersion"
+    compile "io.swagger:swagger-models:$swaggerVersion"
+    compile "io.swagger:swagger-annotations:$swaggerVersion"
+}

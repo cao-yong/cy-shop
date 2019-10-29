@@ -1,0 +1,23 @@
+server:
+  port: 5555
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
+      routes:
+        - id: mall-api
+          uri: lb://mall-api
+          predicates:
+            - Path=/mall-api/**
+        - id: programs-api
+          uri: lb://programs-api
+          predicates:
+            - Path=/programs-api/**
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

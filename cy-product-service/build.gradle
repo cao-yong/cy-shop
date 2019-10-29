@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.caoyong'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':cy-dao')
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile 'mysql:mysql-connector-java'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+}
