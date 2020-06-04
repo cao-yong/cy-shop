@@ -7,18 +7,36 @@ spring:
     name: cms-service
   datasource:
     name: cms-service
-    url: jdbc:mysql://localhost:3306/shop_sw?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/cy_cms?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
-    type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+    password: redis
+    host: localhost
+    port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: test
+    template:
+      default-receive-queue: CY_COUPON_SERVICE_QUEUE
 mapper:
   mappers:
     - com.caoyong.commons.BaseDao
   not-empty: false
   identity: MYSQL
 mybatis:
-  typeAliasesPackage: com.caoyong.sw.bean
+  typeAliasesPackage: com.caoyong.cms.bean
   mapperLocations: classpath*:dao/**/*.xml
 pagehelper:
   helperDialect: mysql
@@ -30,7 +48,10 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 logging:
-  file: ./logs/cms-service/cms-service.log
+  file:
+    name: ./logs/cms-service/cms-service.log
   level:
-    com.caoyong: info
-
+    com.caoyong: debug
+feign:
+  hystrix:
+    enabled: true

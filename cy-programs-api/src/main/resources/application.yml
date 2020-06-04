@@ -5,6 +5,8 @@ server:
 spring:
   application:
     name: programs-api
+  main:
+    allow-bean-definition-overriding: true
 eureka:
   client:
     serviceUrl:
@@ -12,3 +14,11 @@ eureka:
 feign:
   hystrix:
     enabled: true
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+swagger-ui:
+  show: true

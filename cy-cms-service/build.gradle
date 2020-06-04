@@ -1,19 +1,11 @@
-plugins {
-    id 'java'
-}
-
-group 'com.caoyong'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compile project(':cy-dao')
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile 'mysql:mysql-connector-java'
-    compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    implementation project(':cy-dao')
+    implementation project(':cy-share')
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }

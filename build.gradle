@@ -1,66 +1,60 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.7.RELEASE'
-        springCloudVersion = 'Greenwich.SR3'
+        springBootVersion = '2.2.2.RELEASE'
+        springCloudVersion = 'Hoxton.SR1'
         mybatisVersion = '2.1.1'
         tkMybatisBootVersion = '2.1.5'
         tkMapperVersion = '4.1.5'
         MBGVersion = '1.3.7'
         springSwaggerVersion = '2.9.2'
         swaggerVersion = '1.5.24'
-    }
-    repositories {
-        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        gradleDockerComposeVersion = '0.10.4'
+        shardingSphereVersion = '4.0.0-RC3'
     }
 }
-
+plugins {
+    id "org.springframework.boot" version "$springBootVersion" apply false
+    id "com.avast.gradle.docker-compose" version "$gradleDockerComposeVersion"
+    id "org.sonarqube" version "2.8"
+}
 allprojects {
     repositories {
-        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
+        jcenter()
     }
-    apply plugin: 'idea'
-    apply plugin: 'eclipse'
-    group = 'com.caoyong'
-    version '1.0-SNAPSHOT'
 }
-
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    repositories {
-        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
-    }
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    group 'com.caoyong'
+    version '1.0-SNAPSHOT'
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
         }
     }
     dependencies {
-        compile 'org.springframework.boot:spring-boot-starter-test'
-        compile 'org.springframework.cloud:spring-cloud-starter-config'
-        compile("org.springframework.boot:spring-boot-devtools")
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-    }
-    idea {
-        module {
-            downloadSources = true
-            downloadJavadoc = false
-            inheritOutputDirs = false
-            outputDir = file("$buildDir/classes/main/")
-        }
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
     }
 }
 
-idea {
-    project {
-        jdkName = '1.8'
-        languageLevel = '1.8'
+dockerCompose {
+    useComposeFiles = ['docker-compose.yml']
+    projectName = 'cy-shop'
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.login", "admin"
+        property "sonar.password", "admin"
     }
 }

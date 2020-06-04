@@ -1,22 +1,9 @@
-plugins {
-    id 'java'
-}
-
-group 'com.caoyong'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compile project(':cy-share')
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
-    compile "io.springfox:springfox-swagger2:$springSwaggerVersion"
-    compile "io.springfox:springfox-swagger-ui:$springSwaggerVersion"
-    compile "io.swagger:swagger-models:$swaggerVersion"
-    compile "io.swagger:swagger-annotations:$swaggerVersion"
+    implementation project(':cy-share')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    implementation "io.springfox:springfox-swagger2:$springSwaggerVersion"
+    implementation "io.springfox:springfox-swagger-ui:$springSwaggerVersion"
+    implementation "io.swagger:swagger-models:$swaggerVersion"
+    implementation "io.swagger:swagger-annotations:$swaggerVersion"
 }

@@ -1,43 +1,40 @@
+plugins {
+    id "com.thinkimi.gradle.MybatisGenerator" version "2.1.2"
+}
+
+jar.enabled=true
+bootJar.enabled = false
+
+repositories {
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+dependencies {
+    api project(':cy-model')
+    api "org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisVersion"
+    api "tk.mybatis:mapper-spring-boot-starter:$tkMybatisBootVersion"
+    api 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.12'
+    api 'com.netflix.hystrix:hystrix-core:1.5.18'
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    compileOnly 'org.aspectj:aspectjweaver'
+    compileOnly 'gradle.plugin.com.thinkimi.gradle:mybatis-generator-plugin:2.1.2'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'org.springframework:spring-web:5.2.1.RELEASE'
+}
+
 configurations {
     mybatisGenerator
 }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile project(':cy-model')
-    compile "org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisVersion"
-    compile "tk.mybatis:mapper-spring-boot-starter:$tkMybatisBootVersion"
-    compile 'com.alibaba:druid:1.1.20'
-    compile 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.12'
-    compileOnly 'org.aspectj:aspectjweaver'
-    mybatisGenerator "org.mybatis.generator:mybatis-generator-core:$MBGVersion"
-    mybatisGenerator "mysql:mysql-connector-java"
-    mybatisGenerator "tk.mybatis:mapper:$tkMapperVersion"
-}
-
-
-task mybatisGenerate {
-    ant.taskdef(
-            name: 'mbgenerator',
-            classname: 'org.mybatis.generator.ant.GeneratorAntTask',
-            classpath: configurations.mybatisGenerator.asPath
-    )
-    ant.mbgenerator(overwrite: true,
-            configfile: '${basedir}/src/main/resources/generatorConfig.xml', verbose: true) {
-        propertyset {
-            propertyref(name: 'targetProject')
-            propertyref(name: 'userId')
-            propertyref(name: 'driverClass')
-            propertyref(name: 'connectionURL')
-            propertyref(name: 'password')
-            propertyref(name: 'src_main_java')
-            propertyref(name: 'src_main_resources')
-            propertyref(name: 'modelPackage')
-            propertyref(name: 'mapperPackage')
-            propertyref(name: 'sqlMapperPackage')
-        }
+mybatisGenerator {
+    overwrite = true
+    verbose = true
+    configFile = 'src/main/resources/generatorConfig.xml'
+    dependencies {
+        mybatisGenerator "org.mybatis.generator:mybatis-generator-core:$MBGVersion"
+        mybatisGenerator "mysql:mysql-connector-java"
+        mybatisGenerator "tk.mybatis:mapper:$tkMapperVersion"
     }
 }

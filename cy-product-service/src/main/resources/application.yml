@@ -7,11 +7,21 @@ spring:
     name: product-service
   datasource:
     name: product-service
-    url: jdbc:mysql://localhost:3306/shop_sw_prod_back?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/shop_sw?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
-    type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+    host: localhost
+    port: 6379
+    password: redis
 mapper:
   mappers:
     - com.caoyong.commons.BaseDao
@@ -30,7 +40,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 logging:
-  file: ./logs/product-service/product-service.log
+  file:
+    name: ./logs/product-service/product-service.log
   level:
-    com.caoyong: info
-
+    com.caoyong: debug

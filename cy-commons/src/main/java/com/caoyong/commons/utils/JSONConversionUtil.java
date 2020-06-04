@@ -1,119 +1,130 @@
 package com.caoyong.commons.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * json转换工具类
+ * JSON conversion utils
  *
  * @author caoyong
- * @since 2018年11月29日 下午12:54:09
+ * @since 2020-06-03 12:54:09
  */
 @Slf4j
 public class JSONConversionUtil {
+    private static final ObjectMapper om;
+
+    static {
+        om = new ObjectMapper();
+        om.setSerializationInclusion(Include.NON_NULL);
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     /**
-     * 对象转string
+     * obj to string
      *
-     * @param o 对象
-     * @return 对象的json字符串
+     * @param o object
+     * @return object JSON string
      */
     public static String objToString(Object o) {
         log.info("objToString start.");
-        ObjectMapper om = new ObjectMapper();
-        //非空
-        om.setSerializationInclusion(Include.NON_NULL);
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         StringWriter w = new StringWriter();
         try {
             om.writeValue(w, o);
             return w.toString();
-        } catch (JsonGenerationException e) {
-            log.info("objToString JsonGeneration error:", e.getMessage(), e);
-        } catch (JsonMappingException e) {
-            log.info("objToString JsonMapping error:", e.getMessage(), e);
-        } catch (IOException e) {
-            log.info("objToString IO error:", e.getMessage(), e);
         } catch (Exception e) {
-            log.error("objToString error:", e.getMessage(), e);
+            log.error("objToString error:{}", e.getMessage(), e);
         }
         log.info("objToString end.");
         return "";
     }
 
     /**
-     * json string 转对象
+     * JSON string to obj
      *
-     * @param content 对象json字符串
-     * @param cls     类型
-     * @return 对象
+     * @param content JSON string to obj
+     * @param cls     class type
+     * @return obj
      */
     public static <T> T stringToObj(String content, Class<T> cls) {
         log.info("stringToObj start.");
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             return om.readValue(content, cls);
-        } catch (JsonParseException e) {
-            log.info("stringToObj JsonParse error:", e.getMessage(), e);
-        } catch (JsonMappingException e) {
-            log.info("stringToObj JsonMapping error:", e.getMessage(), e);
-        } catch (IOException e) {
-            log.info("stringToObj IO error:", e.getMessage(), e);
         } catch (Exception e) {
-            log.error("stringToObj error:", e.getMessage(), e);
+            log.error("stringToObj error:{}", e.getMessage(), e);
         }
         log.info("stringToObj end.");
         return null;
     }
 
     /**
-     * 对象转换为List集合
+     * JSON string to obj list
      *
-     * @param content 字符串
-     * @param clazz   类
-     * @param <T>     类型
-     * @return List集合
+     * @param content JSON string
+     * @param clazz   list class
+     * @param <T>     result type
+     * @return obj list
      */
-    public static <T> List<T> stringToList(String content, Class<T> clazz) {
+    public static <T> List<T> stringToList(String content, Class<T[]> clazz) {
         log.info("stringToList start, content:{}", content);
         List<T> list = null;
         try {
-            JSONArray json = JSONArray.parseArray(content);
-            T t;
-            list = new ArrayList<>();
-            for (Object obj : json) {
-                JSONObject jsonObject = (JSONObject) obj;
-                t = JSONObject.toJavaObject(jsonObject, clazz);
-                list.add(t);
-            }
+            list = Arrays.asList(om.readValue(content, clazz));
         } catch (Exception e) {
-            log.error("stringToList error:", e.getMessage(), e);
+            log.error("stringToList error:{}", e.getMessage(), e);
         }
         log.info("stringToList end.");
         return list;
     }
 
+    /**
+     * JSON String to map
+     *
+     * @param strJSON JSON String
+     * @return map value
+     */
+    public static Map<String, String> jsonToHashMap(String strJSON) {
+        Map<String, String> dataMap = new HashMap<>();
+        try {
+            if (StringUtils.isNotBlank(strJSON)) {
+                TypeReference<HashMap<String, String>> typeRef
+                        = new TypeReference<>() {
+                };
+                dataMap = om.readValue(strJSON, typeRef);
+            }
+        } catch (Exception e) {
+            log.error("jsonToHashMap error:{}", e.getMessage(), e);
+        }
+        return dataMap;
+    }
 
     /**
-     * 对象转HashMap，基于反射
+     * ojb to HashMap
      *
-     * @param obj          对象
-     * @param ignoreFields 忽略字段
-     * @return 结果
+     * @param o obj
+     * @return HashMap
+     */
+    public static Map<String, String> objTOHashMap(Object o) {
+        return jsonToHashMap(objToString(o));
+    }
+
+    /**
+     * obj to HashMap
+     *
+     * @param obj          obj
+     * @param ignoreFields ignore fields
+     * @return result
      */
     public static Map<String, String> objTOHashMap(Object obj, String... ignoreFields) {
         Map<String, String> map = new HashMap<>();
@@ -127,50 +138,59 @@ public class JSONConversionUtil {
                 map.put(field.getName(), field.get(obj).toString());
             }
         } catch (IllegalAccessException e) {
-            log.info("praseParameterObj error:{}", e.getMessage(), e);
+            log.info("objTOHashMap error:{}", e.getMessage(), e);
         }
         return map;
     }
 
     /**
-     * 通过json对象中的key递归查找值
+     * get value by key from a JSON
      *
-     * @param object json对象或数组
-     * @param key    键
-     * @return 对应string的值
+     * @param object JSON string, JsonNode or ArrayNode
+     * @param key    the key
+     * @return the value string content
      */
     public static String getValueByKeyFromJson(Object object, String key) {
-        if (object == null || object == "") return null;
+        if (object == null || "".equals(object) || StringUtils.isBlank(key))
+            return null;
         Class<?> cls = object.getClass();
-        if (cls == JSONObject.class) {
-            JSONObject jo = (JSONObject) object;
-            if (jo.containsKey(key)) {
-                return jo.getString(key);
-            }
-            for (Object o : jo.values()) {
-                String tmp = getValueByKeyFromJson(o, key);
+        if (List.of(String.class, JsonNode.class, ObjectNode.class, ArrayNode.class).stream().noneMatch(c -> cls == c))
+            return null;
+        if (cls == String.class) {
+            try {
+                JsonNode root = om.readTree((String) object);
+                String tmp = getValueByKeyFromJson(root, key);
                 if (tmp != null) {
                     return tmp;
                 }
+            } catch (Exception ignored) {
             }
-        } else if (cls == JSONArray.class) {
-            JSONArray ja = (JSONArray) object;
-            for (Object o : ja) {
-                if (o != null && o != "") {
-                    String tmp = getValueByKeyFromJson(o, key);
+        } else {
+            JsonNode jsonNode = (JsonNode) object;
+            if (jsonNode.isObject()) {
+                if (jsonNode.has(key)) {
+                    return jsonNode.get(key).asText();
+                }
+                Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
+                while (fields.hasNext()) {
+                    Map.Entry<String, JsonNode> next = fields.next();
+                    JsonNode value = next.getValue();
+                    JsonNodeType nodeType = value.getNodeType();
+                    if (List.of(JsonNodeType.NUMBER, JsonNodeType.STRING).stream().anyMatch(nt -> nt.equals(nodeType)))
+                        continue;
+                    String tmp = getValueByKeyFromJson(value, key);
                     if (tmp != null) {
                         return tmp;
                     }
                 }
             }
-        } else if (cls == String.class) {
-            try {
-                Object o = JSON.parse((String) object);
-                String tmp = getValueByKeyFromJson(o, key);
-                if (tmp != null) {
-                    return tmp;
+            if (jsonNode.isArray()) {
+                for (JsonNode jn : jsonNode) {
+                    String tmp = getValueByKeyFromJson(jn, key);
+                    if (tmp != null) {
+                        return tmp;
+                    }
                 }
-            } catch (JSONException ignored) {
             }
         }
         return null;
