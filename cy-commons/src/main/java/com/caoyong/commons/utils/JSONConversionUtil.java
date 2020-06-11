@@ -126,8 +126,8 @@ public class JSONConversionUtil {
      * @param ignoreFields ignore fields
      * @return result
      */
-    public static Map<String, String> objTOHashMap(Object obj, String... ignoreFields) {
-        Map<String, String> map = new HashMap<>();
+    public static Map<String, Object> objTOHashMap(Object obj, String... ignoreFields) {
+        Map<String, Object> map = new HashMap<>();
         try {
             Field[] declaredFields = obj.getClass().getDeclaredFields();
             for (Field field : declaredFields) {
@@ -135,7 +135,8 @@ public class JSONConversionUtil {
                     continue;
                 }
                 field.setAccessible(true);
-                map.put(field.getName(), field.get(obj).toString());
+                if (null != field.get(obj))
+                    map.put(field.getName(), field.get(obj));
             }
         } catch (IllegalAccessException e) {
             log.info("objTOHashMap error:{}", e.getMessage(), e);
