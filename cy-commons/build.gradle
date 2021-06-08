@@ -14,5 +14,4 @@ dependencies {
     compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
     compileOnly 'org.springframework:spring-web:5.2.1.RELEASE'
     compileOnly 'org.slf4j:slf4j-api:1.7.29'
-    compile 'com.github.promeg:tinypinyin:2.0.3'
 }
