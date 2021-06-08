@@ -19,7 +19,6 @@ plugins {
 }
 allprojects {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
         mavenCentral()
         jcenter()
     }
@@ -29,8 +28,8 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_8
+    targetCompatibility = JavaVersion.VERSION_8
     group 'com.caoyong'
     version '1.0-SNAPSHOT'
     dependencyManagement {
