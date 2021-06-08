@@ -39,8 +39,8 @@ public class BrandServiceImpl implements BrandService {
                 result.setSuccess(true);
             }
         } catch (Exception e) {
-            result.setErrorCode(ErrorCodeEnum.UNKOWN_ERROR.getCode());
-            result.setErrorCode(ErrorCodeEnum.UNKOWN_ERROR.getMsg());
+            result.setErrorCode(ErrorCodeEnum.UNKNOWN_ERROR.getCode());
+            result.setErrorCode(ErrorCodeEnum.UNKNOWN_ERROR.getMsg());
             log.error("selectBrandById Exception:{}", e.getMessage(), e);
         }
         return result;

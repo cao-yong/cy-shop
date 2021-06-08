@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  */
 public enum ErrorCodeEnum {
 
-    UNKOWN_ERROR("500", "未知错误"),
+    UNKNOWN_ERROR("500", "未知错误"),
 
     SERVICE_SAVE_ERROR("2001", "Service保存失败"),
     SERVICE_UPDATE_ERROR("2002", "Service更新失败"),

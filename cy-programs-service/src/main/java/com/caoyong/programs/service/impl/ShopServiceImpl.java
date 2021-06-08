@@ -39,8 +39,8 @@ public class ShopServiceImpl implements ShopService {
                 result.setSuccess(true);
             }
         } catch (Exception e) {
-            result.setErrorCode(ErrorCodeEnum.UNKOWN_ERROR.getCode());
-            result.setErrorCode(ErrorCodeEnum.UNKOWN_ERROR.getMsg());
+            result.setErrorCode(ErrorCodeEnum.UNKNOWN_ERROR.getCode());
+            result.setErrorCode(ErrorCodeEnum.UNKNOWN_ERROR.getMsg());
             log.error("selectShopById Exception:{}", e.getMessage(), e);
         }
         return result;
