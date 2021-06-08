@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * JSON conversion utils
@@ -99,7 +100,7 @@ public class JSONConversionUtil {
         try {
             if (StringUtils.isNotBlank(strJSON)) {
                 TypeReference<HashMap<String, String>> typeRef
-                        = new TypeReference<>() {
+                        = new TypeReference() {
                 };
                 dataMap = om.readValue(strJSON, typeRef);
             }
@@ -155,7 +156,7 @@ public class JSONConversionUtil {
         if (object == null || "".equals(object) || StringUtils.isBlank(key))
             return null;
         Class<?> cls = object.getClass();
-        if (List.of(String.class, JsonNode.class, ObjectNode.class, ArrayNode.class).stream().noneMatch(c -> cls == c))
+        if (Stream.of(String.class, JsonNode.class, ObjectNode.class, ArrayNode.class).noneMatch(c -> cls == c))
             return null;
         if (cls == String.class) {
             try {
@@ -177,7 +178,7 @@ public class JSONConversionUtil {
                     Map.Entry<String, JsonNode> next = fields.next();
                     JsonNode value = next.getValue();
                     JsonNodeType nodeType = value.getNodeType();
-                    if (List.of(JsonNodeType.NUMBER, JsonNodeType.STRING).stream().anyMatch(nt -> nt.equals(nodeType)))
+                    if (Stream.of(JsonNodeType.NUMBER, JsonNodeType.STRING).anyMatch(nt -> nt.equals(nodeType)))
                         continue;
                     String tmp = getValueByKeyFromJson(value, key);
                     if (tmp != null) {
