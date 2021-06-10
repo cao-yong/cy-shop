@@ -171,14 +171,19 @@ public class JSONConversionUtil {
             JsonNode jsonNode = (JsonNode) object;
             if (jsonNode.isObject()) {
                 if (jsonNode.has(key)) {
-                    return jsonNode.get(key).asText();
+                    if (Stream.of(JsonNodeType.NUMBER, JsonNodeType.STRING)
+                            .anyMatch(nt -> nt.equals(jsonNode.get(key).getNodeType()))) {
+                        return jsonNode.get(key).asText();
+                    } else {
+                        return jsonNode.get(key).toString();
+                    }
                 }
                 Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
                 while (fields.hasNext()) {
                     Map.Entry<String, JsonNode> next = fields.next();
                     JsonNode value = next.getValue();
                     JsonNodeType nodeType = value.getNodeType();
-                    if (Stream.of(JsonNodeType.NUMBER, JsonNodeType.STRING).anyMatch(nt -> nt.equals(nodeType)))
+                    if (Arrays.asList(JsonNodeType.NUMBER, JsonNodeType.STRING).contains(nodeType))
                         continue;
                     String tmp = getValueByKeyFromJson(value, key);
                     if (tmp != null) {
@@ -197,4 +202,5 @@ public class JSONConversionUtil {
         }
         return null;
     }
+
 }
